@@ -4,7 +4,7 @@ const express = require('express');
 const cors = require('cors');
 const bodyParser = require('body-parser');
 // Configuring the database
-const dbConfig = require('./config/database.config.js');
+const dbConfig = require('./config/database.config');
 const mongoose = require('mongoose');
 
 // create app
@@ -20,7 +20,7 @@ mongoose.Promise = global.Promise;
 // Connecting to the database
 mongoose.connect(dbConfig.url, { useNewUrlParser: true })
   .then(() => {
-    console.log("Successfully connected to the database");
+    console.log('Successfully connected to the database');
   }).catch(err => {
     console.log('Could not connect to the database. Exiting now...', err);
     process.exit();
@@ -28,7 +28,7 @@ mongoose.connect(dbConfig.url, { useNewUrlParser: true })
 
 // home route
 app.get('/', (_, res) => {
-  res.json({ "message": "Welcome to the app"});
+  res.json({ 'message': "Welcome to the app"});
 });
 
 // Require emails routes

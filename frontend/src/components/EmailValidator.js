@@ -5,12 +5,23 @@ import { getAllVerifiedEmails, getVerifiedEmail } from 'apis/email';
 
 const EmailValidator = () => {
   const [verifiedEmails, setVerifiedEmail] = useState([]);
+  const [errors, setErrors] = useState([]);
 
   useEffect(() => {
     getAllVerifiedEmails()
       .then((res) => { setVerifiedEmail(res.data) })
       .catch((err) => { console.error(err) })
   }, []);
+
+  useEffect(() => {
+    let id = 0;
+
+    if (!errors.length) return;
+
+    id = setTimeout(setTimeout(() => setErrors([]), 5000));
+
+    return (() => clearTimeout(id));
+  }, [errors]);
 
   const onSubmit = async (values) => {
     getVerifiedEmail(values.firstName, values.lastName, values.url)
@@ -19,7 +30,10 @@ const EmailValidator = () => {
 
         toast.warning('No email combination found');
       })
-      .catch((err) => { toast.error(err || 'Something went wrong') })
+      .catch((err) => {
+        toast.error('failed to submit');
+        setErrors(err.response.data.errors);
+      })
   };
 
   const renderVerifiedEmails = () => (
@@ -28,8 +42,12 @@ const EmailValidator = () => {
     ))
   )
 
+  const renderFormErrors = () => (
+    errors.map((err) => <div className='text-danger' key={Object.keys(err)}>{Object.keys(err)}: {Object.values(err)}</div>)
+  );
+
   return (
-    <div className="d-flex">
+    <div>
       <Form
         onSubmit={onSubmit}
         render={({ handleSubmit }) => (
@@ -52,8 +70,10 @@ const EmailValidator = () => {
                 <Field name="url" component="input" placeholder="url" required />
               </div>
 
+              {renderFormErrors()}
+
               <div className='col mt-2'>
-                <button className='btn btn-success' type="submit">
+                <button className='btn btn-success' type='submit'>
                   Submit
                 </button>
               </div>

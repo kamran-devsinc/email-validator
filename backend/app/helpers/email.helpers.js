@@ -4,17 +4,17 @@ const { MAILBOX_LAYER_BASE_URL, MAILBOX_LAYER_ACCESS_KEY } = process.env;
 const MAILBOX_LAYER_URL = `${MAILBOX_LAYER_BASE_URL}=${MAILBOX_LAYER_ACCESS_KEY}&smtp=1&format=1`;
 
 const findCombination = (firstName, lastName, domain) => {
-  const tmpEmails = [];
+  const tmpEmailCombinations = [
+    `${firstName}.${lastName}@${domain}`,
+    `${firstName}@${domain}`, `${lastName}@${domain}`,
+    `${firstName}${lastName}@${domain}`,
+    `${lastName}.${firstName}@${domain}`,
+    `${lastName}.${firstName}@${domain}`,
+    `${firstName.charAt(0)}.${lastName}@${domain}`,
+    `${firstName.charAt(0)}${lastName.charAt(0)}@${domain}`
+  ];
 
-  tmpEmails.push(`${firstName}.${lastName}@${domain}`);
-  tmpEmails.push(`${firstName}@${domain}`);
-  tmpEmails.push(`${lastName}@${domain}`);
-  tmpEmails.push(`${firstName}${lastName}@${domain}`);
-  tmpEmails.push(`${lastName}.${firstName}@${domain}`);
-  tmpEmails.push(`${firstName.charAt(0)}.${lastName}@${domain}`);
-  tmpEmails.push(`${firstName.charAt(0)}${lastName.charAt(0)}@${domain}`);
-
-  return tmpEmails;
+  return tmpEmailCombinations;
 }
 
 const isVerifiedEmailFromMailBox = async (email) => {
