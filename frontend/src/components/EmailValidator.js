@@ -43,7 +43,9 @@ const EmailValidator = () => {
   )
 
   const renderFormErrors = () => (
-    errors.map((err) => <div className='text-danger' key={Object.keys(err)}>{Object.keys(err)}: {Object.values(err)}</div>)
+    errors.map((err) => (
+      <div className='text-danger' key={Object.keys(err)}>{Object.keys(err)}: {Object.values(err)}</div>
+    ))
   );
 
   return (
