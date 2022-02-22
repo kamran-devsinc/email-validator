@@ -6,6 +6,7 @@ import { getAllVerifiedEmails, getVerifiedEmail } from 'apis/email';
 const EmailValidator = () => {
   const [verifiedEmails, setVerifiedEmail] = useState([]);
   const [errors, setErrors] = useState([]);
+  const [isSubmitting, setSubmitting] = useState(false);
 
   useEffect(() => {
     getAllVerifiedEmails()
@@ -24,6 +25,8 @@ const EmailValidator = () => {
   }, [errors]);
 
   const onSubmit = async (values) => {
+    setSubmitting(true);
+
     getVerifiedEmail(values.firstName, values.lastName, values.url)
       .then((res) => {
         if (res.data) return setVerifiedEmail([res.data, ...verifiedEmails]);
@@ -34,11 +37,12 @@ const EmailValidator = () => {
         toast.error('failed to submit');
         setErrors(err.response.data.errors);
       })
+      .finally(() => setSubmitting(false));
   };
 
   const renderVerifiedEmails = () => (
     verifiedEmails.map((data, index) => (
-      <p key={index}>{data.verifiedEmail} ({data.name})</p>
+      <li data-testid='validCombination' key={index}>{data.verifiedEmail} ({data.name})</li>
     ))
   )
 
@@ -49,7 +53,7 @@ const EmailValidator = () => {
   );
 
   return (
-    <div>
+    <div data-testid='emailValidator'>
       <Form
         onSubmit={onSubmit}
         render={({ handleSubmit }) => (
@@ -59,31 +63,40 @@ const EmailValidator = () => {
 
               <div className='col'>
               <div className='row'><label>First Name</label></div>
-                <Field name="firstName" component="input" placeholder="First Name" required />
+                <Field data-testid='firstName' name='firstName' component='input' placeholder='First Name' required />
               </div>
 
               <div className='col'>
                 <div className='row'><label>Last Name</label></div>
-                <Field name="lastName" component="input" placeholder="Last Name" required />
+                <Field data-testid='lastName' name='lastName' component='input' placeholder='Last Name' required />
               </div>
 
               <div className='col'>
                 <div className='row'><label>URL</label></div>
-                <Field name="url" component="input" placeholder="url" required />
+                <Field data-testid='url' name='url' component='input' placeholder='url' required />
               </div>
 
               {renderFormErrors()}
 
               <div className='col mt-2'>
-                <button className='btn btn-success' type='submit'>
-                  Submit
-                </button>
+                <div className='d-flex align-center'>
+                  <button className='btn btn-success' type='submit' data-testid='submit'>
+                    Submit
+                  </button>
+
+                  { isSubmitting ? (
+                    <div data-testid='loading' className="spinner-border text-primary ms-2" role="status" />
+                    ) : null
+                  }
+                </div>
               </div>
             </form>
 
             <h2>Results</h2>
 
-            {renderVerifiedEmails()}
+            <ul>
+              {renderVerifiedEmails()}
+            </ul>
           </div>
         )}
       />
